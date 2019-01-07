@@ -34,7 +34,7 @@ module.exports = {
         }),
 
         new HtmlWebpackPlugin({
-            template: path.join(__dirname, 'index.ejs'),
+            template: path.join(__dirname, 'index.html'),
             title: appHtmlTitle
         })
     ],
@@ -53,15 +53,7 @@ module.exports = {
             // STYLES
             {
                 test: /\.css$/,
-                use: [
-                    'style-loader',
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            sourceMap: IS_DEV
-                        }
-                    },
-                ]
+                use:['style-loader','css-loader']
             },
 
             // CSS / SASS
