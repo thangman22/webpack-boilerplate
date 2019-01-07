@@ -3,6 +3,10 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const ResourceHintWebpackPlugin = require('resource-hints-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const WebpackBar = require('webpackbar')
 
 // Is the current build a development build
 const IS_DEV = (process.env.NODE_ENV === 'dev')
@@ -21,7 +25,18 @@ module.exports = {
     minimizer: [new TerserPlugin({
       parallel: true,
       cache: true
-    })]
+    }),
+    new UglifyJsPlugin()],
+    splitChunks: {
+      cacheGroups: {
+        styles: {
+          name: 'styles',
+          test: /\.css$/,
+          chunks: 'all',
+          enforce: true
+        }
+      }
+    }
   },
   entry: {
     vendor: [
@@ -37,6 +52,9 @@ module.exports = {
     ]
   },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].css'
+    }),
     new webpack.DefinePlugin({
       IS_DEV: IS_DEV
     }),
@@ -47,9 +65,13 @@ module.exports = {
       minify: true,
       meta: {
         viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'
-      }
+      },
+      inject: true
     }),
-    new ResourceHintWebpackPlugin()
+    new ResourceHintWebpackPlugin(),
+    new FriendlyErrorsWebpackPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new WebpackBar()
   ],
   module: {
     rules: [
@@ -66,7 +88,7 @@ module.exports = {
       // STYLES
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        use: [MiniCssExtractPlugin.loader, 'css-loader']
       },
 
       // CSS / SASS
