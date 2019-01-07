@@ -39,9 +39,6 @@ module.exports = {
     }
   },
   entry: {
-    vendor: [
-      'lodash'
-    ],
     bundle: path.join(dirApp, 'index')
   },
   resolve: {
@@ -58,7 +55,6 @@ module.exports = {
     new webpack.DefinePlugin({
       IS_DEV: IS_DEV
     }),
-
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'index.html'),
       title: appHtmlTitle,
