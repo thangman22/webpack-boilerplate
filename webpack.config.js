@@ -1,4 +1,5 @@
 const path = require('path')
+const fs = require('fs')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
@@ -15,7 +16,26 @@ const dirNode = 'node_modules'
 const dirApp = path.join(__dirname, 'app')
 const dirAssets = path.join(__dirname, 'assets')
 
-const appHtmlTitle = 'Webpack Boilerplate'
+function generateHtmlPlugins (templateDir) {
+  // Read files in template directory
+  const templateFiles = fs.readdirSync(path.resolve(__dirname, templateDir))
+  return templateFiles.map(item => {
+    // Split names and extension
+    const parts = item.split('.')
+    const name = parts[0]
+    const extension = parts[1]
+    // Create new HTMLWebpackPlugin with options
+    return new HtmlWebpackPlugin({
+      filename: `${name}.html`,
+      template: path.resolve(__dirname, `${templateDir}/${name}.${extension}`),
+      minify: true,
+      meta: {
+        viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'
+      },
+      inject: true
+    })
+  })
+}
 
 /**
  * Webpack Configuration
@@ -55,20 +75,11 @@ module.exports = {
     new webpack.DefinePlugin({
       IS_DEV: IS_DEV
     }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'index.html'),
-      title: appHtmlTitle,
-      minify: true,
-      meta: {
-        viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'
-      },
-      inject: true
-    }),
     new ResourceHintWebpackPlugin(),
     new FriendlyErrorsWebpackPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new WebpackBar()
-  ],
+  ].concat(generateHtmlPlugins('./views')),
   module: {
     rules: [
       // BABEL
