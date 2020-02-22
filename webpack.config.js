@@ -97,7 +97,20 @@ module.exports = {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader']
       },
-
+      // IMAGES
+      {
+        test: /\.(gif|png|jpe?g|svg)$/i,
+        use: [
+          'file-loader',
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              bypassOnDebug: true,
+              disable: true
+            }
+          }
+        ]
+      },
       // CSS / SASS
       {
         test: /\.scss/,
@@ -117,15 +130,6 @@ module.exports = {
             }
           }
         ]
-      },
-
-      // IMAGES
-      {
-        test: /\.(jpe?g|png|gif)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[path][name].[ext]'
-        }
       }
     ]
   }
