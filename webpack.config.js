@@ -28,7 +28,6 @@ function generateHtmlPlugins (templateDir) {
     return new HtmlWebpackPlugin({
       filename: `${name}.html`,
       template: path.resolve(__dirname, `${templateDir}/${name}.${extension}`),
-      minify: true,
       meta: {
         viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'
       },
@@ -82,6 +81,14 @@ module.exports = {
   ].concat(generateHtmlPlugins('./views')),
   module: {
     rules: [
+      // HTML
+      {
+        test: /\.html$/i,
+        loader: 'html-loader',
+        options: {
+          minimize: true
+        }
+      },
       // BABEL
       {
         test: /\.js$/,
